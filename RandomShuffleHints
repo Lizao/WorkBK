@@ -1,0 +1,24 @@
+After Fix
+
+while (allSize > 0) {
+        for (int jx = 0; jx < categories.size() && allSize > 0; ++jx) {
+            VoiceVector<HintVisabilityPair>::type &hints = m_cMultiLanguageHintCategory[categories[jx]];
+            random_shuffle(hints.begin(), hints.end());
+            if (hints.size() <= index) {
+                continue;
+            }
+            std::string mType = hints[index].first;
+            if (VR_CONFIG_SDS_PROMPTS_NO_ATTRIBUTE_DEF == mType) {
+                cContent.push_back(hints[index].second);
+            }
+            else {
+                VoiceMap<std::string, bool>::const_iterator it = m_cHintVisabilityResult.find(mType);
+                if (it != m_cHintVisabilityResult.end() && it->second == true) {
+                     cContent.push_back(hints[index].second);
+                     
+                }
+            }
+            --allSize; // need move out
+        }
+        ++index;
+    }
