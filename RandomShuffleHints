@@ -1,9 +1,23 @@
 After Fix
 
-while (allSize > 0) {
-        for (int jx = 0; jx < categories.size() && allSize > 0; ++jx) {
+bool VR_SDSMultiLanguage::ShowSpecificCategoryHint(VoiceVector<std::string>::type &cContent, const std::vector<std::string>& categories)
+{
+    int index = 0;
+    int count = 0;
+    int allSize = 0;
+    for (int ix = 0; ix < categories.size(); ++ix) {
+        count += m_cMultiLanguageHintCategory[categories[ix]].size();
+    }
+    allSize = count < VR_HINT_LISTNUM_DEF ? count : VR_HINT_LISTNUM_DEF;
+    count = allSize;
+    for (int ix = 0; ix < categories.size(); ++ix) {
+        VoiceVector<HintVisabilityPair>::type &hints = m_cMultiLanguageHintCategory[categories[ix]];
+        random_shuffle(hints.begin(), hints.end());
+    }
+    int jx = 0; 
+    while (allSize > 0) {        
+        for (jx; jx < categories.size() && allSize > 0; ++jx) {
             VoiceVector<HintVisabilityPair>::type &hints = m_cMultiLanguageHintCategory[categories[jx]];
-            random_shuffle(hints.begin(), hints.end());
             if (hints.size() <= index) {
                 continue;
             }
@@ -14,11 +28,15 @@ while (allSize > 0) {
             else {
                 VoiceMap<std::string, bool>::const_iterator it = m_cHintVisabilityResult.find(mType);
                 if (it != m_cHintVisabilityResult.end() && it->second == true) {
-                     cContent.push_back(hints[index].second);
-                     
+                     cContent.push_back(hints[index].second);   
                 }
             }
-            --allSize; // need move out
+            --allSize; // need move out     
         }
         ++index;
+        if( cContent.size() < count) {
+                jx = 0;
+            }
     }
+    return true;
+}
