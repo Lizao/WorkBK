@@ -1,5 +1,4 @@
 After Fix
-
 bool VR_SDSMultiLanguage::ShowSpecificCategoryHint(VoiceVector<std::string>::type &cContent, const std::vector<std::string>& categories)
 {
     int index = 0;
@@ -14,10 +13,13 @@ bool VR_SDSMultiLanguage::ShowSpecificCategoryHint(VoiceVector<std::string>::typ
         VoiceVector<HintVisabilityPair>::type &hints = m_cMultiLanguageHintCategory[categories[ix]];
         random_shuffle(hints.begin(), hints.end());
     }
-    int jx = 0; 
-    while (allSize > 0) {        
+    int jx = 0;
+    while (allSize > 0) {
         for (jx; jx < categories.size() && allSize > 0; ++jx) {
             VoiceVector<HintVisabilityPair>::type &hints = m_cMultiLanguageHintCategory[categories[jx]];
+            if (hints.size() == 0) {
+                VR_ERROR("can not find hint in given categories");
+            }
             if (hints.size() <= index) {
                 continue;
             }
@@ -28,15 +30,19 @@ bool VR_SDSMultiLanguage::ShowSpecificCategoryHint(VoiceVector<std::string>::typ
             else {
                 VoiceMap<std::string, bool>::const_iterator it = m_cHintVisabilityResult.find(mType);
                 if (it != m_cHintVisabilityResult.end() && it->second == true) {
-                     cContent.push_back(hints[index].second);   
+                     cContent.push_back(hints[index].second);
+                }else
+                {
+                    VR_ERROR("can not find given categories");
                 }
             }
-            --allSize; // need move out     
+            --allSize; // need move out
         }
         ++index;
-        if( cContent.size() < count) {
-                jx = 0;
-            }
+        if(cContent.size() < count) {
+            jx = 0;
+        }
     }
+
     return true;
 }
